@@ -1,0 +1,38 @@
+Current working operation:
+
+Sending packets to primary and backup route according to the tag status.
+
+Topology : Toplogy consist of 6 switches and two hosts connected to s1 and s4. The nodes are configured in topology.json file. A picture of the topology is attached.
+
+Testing Primary path : h1-->s1-->s2-->s3-->s4--> h2 
+Testing Backup path : h1 --> s1 --> s2 --> s5 --> s6 --> s4 --> h2
+
+Run: 
+1. p4 terminal --> Vagrant init, vagrant up
+2. make run --> it should do the following : 
+   * build the topology in mininet and configure the switch. A mininet terminal will open.
+
+3. open two host. 
+   mininet > xterm h1 h2
+4. need to start the server at h2 --> ./receive.py 
+5. test the primary forwarding, 
+   h1 --> ./send.py 10.0.2.2 "test primary" --T 1 (the tag is T1, meaning regular tag packet)
+   print the primary route : 1-2-3-4 
+6.test the backup forwarding, 
+  h1 --> ./send.py 10.0.2.2 "test backup" --T 2 (the tag is T2, meaning crankback/recovered tag packet)
+  print the backup route 1-2-5-6-4
+
+**keep the directory inside the exercise folder of tutorial to use the 'make' object of p4c compiler. 
+
+Possible errors : 
+*gRPC server error : 
+ solve: cleanup sometimes solve it. but not a consistent error. follow the link if it happens. 
+ 	https://groups.google.com/a/onosproject.org/forum/#!topic/brigade-p4/qlHYfLAAoFY
+*Make Error: P4 switch s1 did not start correctly.
+ solve : cd /usr/loca/lib
+	check /usr/local/lib has libbmp
+	sudo ldconfig
+*Build failed: can not bind port because of another process. Makefile **[run] Error 1. 
+ Solve : delete Makefile and rerun 'make'. 
+
+***errors can be varied based on the environment setup. 
